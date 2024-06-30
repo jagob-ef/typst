@@ -73,10 +73,6 @@ Sei X eine Zufallsvariable mit $mu:=bb(E)[X]$, $sigma^2:=bb(V)[X]$, sowie $X_i$ 
 === Maximum likelihood estimation (MLE)
 === Asymptotische Normalität
 
-Konsistenz: #link("https://www.stat.cmu.edu/~larry/=stat705/Lecture15.pdf") \
-
-Asymptotische Normalität: #link("https://ocw.mit.edu/courses/18-443-statistics-for-applications-fall-2006/03b407da8a94b3fe22d987453807ca46_lecture3.pdf") \
-
 Asymptotische Normalität ist in der mathematischen Statistik eine Eigenschaft von Statistiken bzw. Schätzern.\
 In diesem Abschnitt wollen wir untersuchen, unter welchen Voraussetzungen asymptotische Normalität für einen MLE gegeben ist.
 
