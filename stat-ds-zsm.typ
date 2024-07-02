@@ -219,14 +219,106 @@ siehe Notizen
 
 === Bedingte Erwartung
 #definition("Bedingte Wahrscheinlichkeit, bedingte Erwartung")[
+Seien $X$, $Y$ diskrete Zufallsvariablen. $ bb(P)[Y=j, X=i]:= (bb(P)[Y=j,X=i])/(bb(P)[X=i]), $ $ bb(E)[Y|X=i]:=sum_j j dot bb(P)[Y=j|X=i]=sum_j j dot (bb(P)[Y=j,X=i])/(bb(P)[X=i]), $ $ bb(E)[Y|X]:=sum_i bb(E)[Y|X=i] dot bb(1)_{X=i}. $ $bb(E)[Y|X=i]$ ist eine reelle Zahl, $bb(E)[Y|X]$ hingegen eine Zufallsvariable welche den Wert $bb(E)[Y|X=i]$ annimmt genau dann wenn $X(omega)=i$.
+]
 
+#lemma[
+- $bb(E)[bb(E)[Y|X]]=bb(E)[Y]$
+- $bb(V)[Y] = bb(E)[bb(V)[Y|X]]+bb(V)[bb(E)[Y|X]]$
+- $bb(E)[g(Y)|X]$ ist Funktion von $X$
+- $X$, $Y$ unabhängig $arrow.double bb(E)[g(Y)|X]=bb(E)[g(Y)]$
+]
+#proof[
+
+]
+Wir widmen uns nun einem Resultat, mit dem man aus einem zunächst beliebigem (bzw. beliebig schlechtem) Schätzer durch eine Transformation einen in gewissem Sinne "optimalen" Schätzer konstruieren kann.
+
+#theorem("Rao-Blackwell")[
+Sei $X_1,...,X_n tilde^"iid" f(X|theta)$,  $tilde(theta)$ ein beliebiger erwartungstreuer Schätzer für $theta$ und $T$ eine suffiziente Statistik für $theta$. Sei $theta^* :=bb(E)[tilde(theta)|T]$. Dann gilt:
+- $theta^*$ ist erwartungstreuer Schätzer
+- $"MSE"(theta^*,theta)<="MSE"(tilde(theta), theta)$.
+Die Transformation von $tilde(theta)$ durch den Ausdruck $theta^*$ wird oft "Rao-Blackwellization" genannt. Das Resultat garantiert, das der MSE nach der Transformation kleiner wird - durch dieses Verfahren erhalten wir also einen besseren Schätzer!
+]
+#proof[
++ $theta^*$ ist erwartungstreuer Schätzer: $bb(E)[theta^*]=bb(E)[bb(E)[tilde(theta)|T]]=bb(E)[tilde(theta)]=theta$, womit Erwartungstreue gilt. Wir müssen noch überprüfen, ob $theta^*$ tatsächlich ein Schätzer ist. Eine Statistik ist Schätzer eines Parameters $theta$, wenn sie unabhängig von $theta$ ist. Wir überprüfen: $ theta^* =^"def" bb(E)[tilde(theta)|T]=integral tilde(theta)(x) dot underbrace(f(x|T), "unabh. von" theta) dif x. $
++ Da $tilde(theta)$ bzw. $theta^*$ erwartungstreu sind, erhalten wir mittels Bias-Variance-Zerlegung $"MSE"(tilde(theta), theta)=bb(V)[tilde(theta)]$ bzw. $"MSE"(theta^*, theta)=bb(V)[theta^*]$. Nun gilt nach vorherigen Lemma: $ bb(V)[tilde(theta)]&=bb(V)[underbrace(bb(E)[tilde(theta)|T],theta^*)]+bb(E)[bb(V)[tilde(theta)|T]]\ arrow.l.r.double bb(V)[theta^*] &= bb(V)[tilde(theta)]-bb(E)[bb(V)[tilde(theta)|T]]<= bb(V)[tilde(theta)], $ wobei die Ungleichung dadurch gerechtfertigt ist, dass die (bedingte) Varianz und somit ihr Erwartungswert stets nichtnegativ ist.
+]
+
+#example[
++ Für nicht-suffiziente Statistiken $T$ ist liefert das Resultat nicht unbedingt einen Schätzer:\ Seien $X_1,...,X_n tilde^"iid" cal(N)(theta,1)$, $tilde(theta):=1/2(X_1+X_2)$ und $T(X):=X_1$ eine nicht-suffiziente Statistik. $T$ ist nicht suffizient, da für die gemeinsame Verteilung $f(x_1,...,x_n|theta)$ von $X_1,...,X_N$ gilt: $ f(x_1,...,x_n|theta)=product_(i=1)^n f(x_i|theta)&=product_(i=1)^n 1/sqrt(2pi) dot exp(-(x_i-theta)^2/(2))=(2pi)^(-n/2) dot exp(-1/2 sum_(i=1)^n (x_i-theta)^2)\ &=(2pi)^(-n/2) dot exp(-1/2 sum_(i=1)^n (x_i^2-2x_i theta+theta^2))\ &= (2pi)^(-n/2) dot exp(-1/2 sum_(i=1)^n x_i^2) dot exp(theta sum_(i=1)^n x_i) dot exp(-1/2 n theta^2) $ Wir finden für unser T keine gültigen $g(T(X_1,...,X_n,theta))$, $h(X_1,...,X_n)$ mit $f=g dot h$. (Bemerke: Für $U(X_1,...,X_n):=sum_(i=1)^n X_i$ gäbe es eine solche Faktorisierung, und zwar: $ f=underbrace((2pi)^(-n/2) dot exp(-1/2 sum_(i=1)^n x_i^2), h(X_1,...,X_n)) dot underbrace(exp(theta sum_(i=1)^n x_i) dot exp(-1/2 n theta^2), g(U,theta)), $ d.h. U wäre suffizient).\ Wir wollen also versuchen, $tilde(theta)$ mit Hilfe von $T$ zu verbessern. Wir erhalten durch Rao-Blackwellization: $ theta^*=bb(E)[tilde(theta)|T]=bb(E)[1/2(X_1+X_2)|T]=1/2(underbrace(bb(E)[X_1|X_1],=X_1\ "siehe"\ "Def bed. Erw.")+underbrace(bb(E)[X_2|X_1],=bb(E)[X_2]\ "weil" X_1\, X_2\ "unabh."))=1/2 X_1 +1/2 theta. $ $theta^*$ ist erwartungstreu, da: $ bb(E)[theta^*]=bb(E)[1/2 X_1 +1/2 theta]=1/2 bb(E)[X_1]+1/2 theta= 1/2 theta +1/2 theta=theta. $ Außerdem gilt: $ bb(V)[theta^*]=bb(V)[1/2 X_1 +1/2 theta]=bb(V)[1/2 X_1]=1/4 < 1/2=1/4 (1+1)=bb(V)[1/2 (X_1+X_2)]=bb(V)[tilde(theta)]. $ *Aber*: $theta^*$ ist #underline("kein") Schätzer, da der Ausdruck nicht unabhängig von $theta$ ist.
 ]
 
 === Konfidenzintervalle
+In diesem Abschnitt wollen wir Konfidenzintervalle konstruieren. Dafür suchen wir für eine gegebene Verfeilungsfunktion $ F_X:bb(R) &arrow.r.long[0,1]\ x &arrow.r.bar.long bb(P)[X<=x]=:F_X (x) $ eine Art Inverse.
+
+#definition("Quantilsfunktion")[
+$ F_X^-:(0,1) &arrow.r.long bb(R)\ alpha &arrow.r.bar.long inf{t in bb(R) | F_X (t)>=alpha}=:F_X^- (alpha) $ heißt Quantilsfunktion von $X$, $ q_alpha:=F_X^- (alpha) $ heißt $alpha$-Quantil.
+]
+Dies ist also quasi eine Umkehrfunktion von $F_X$. Aber warum so umständlich? Es wäre doch naheliegender, die Quantilsfunktion als $F_X^(-1)({alpha})$ im Sinne des Urbildes oder noch besser gleich als $F_X^(-1)(alpha)$ im Sinne einer Umkehrfunktion zu definieren? Nun, dass eine Funktion nicht unbedingt eine Umkehrfunktion besitzt ist einleuchtend, also wäre die zweite Option wohl zu optimistisch. Die erste Variante, bei der wir vom Urbild von $F_X$ Gebrauch machen, ist faktisch unsere Definition der Quantilsfunktion, nur garantieren wir mit dieser Definition zusätzlich, dass wir einen eindeutigen Wert erhalten. In der VO haben wir gesehen, dass die Quantilsfunktion der Bernoulliverteilung sonst nicht eindeutig wäre, da sie stückweise konstant ist.
+
+Für die Definition eines Konfidenzintervalls brauchen wir den Begriff des *Intervallschätzers*. Im Gegensatz zu den uns bereits bekannten _Punktschätzern_ geben diese Intervalle $[a(X),b(X)]$ aus, in denen der Wert $theta$ mit hoher Wahrscheinlichkeit liegen soll.
+
+#definition("Intervallschätzer")[
+Ein Intervallschätzer ist eine Funktion $ cal(X)^n &arrow.r.long cal(I)(bb(R))\ X &arrow.r.bar.long [a(X),b(X)], $ wobei $cal(X)^n$ den Wertebereich der Zufallsvariablen $X=(X_1,...,X_n)$ und $cal(I)(bb(R))$ die Menge der Intervalle aus $bb(R)$ bezeichnet.
+]
+
+#definition("Konfidenzintervall")[
+Sei $X arrow.r.bar.long [a(X),b(X)]$ ein Intervallschätzer, $X tilde f(x|theta)$ einer von $theta$ abhängigen Verteilung folgend. Falls $ bb(P)_theta [a(X)<=theta<=b(X)]=gamma $ für alle $theta in Theta$, so heißt $[a(.),b(.)]$ ein $100gamma$%-iges Konfidenzintervall.  
+]
+
+#example[
+Seien $X_1,...,X_n tilde^"iid" cal(N)(mu, sigma^2)$, $sigma^2$ bekannt, $mu$ unbekannt. Bestimme ein $100gamma$%-iges Konfidenzintervall für $mu$.
+
+Betrachte $ overline(X)=1/n sum_(i=1)^n X_i tilde cal(N)(mu, sigma^2/n). $ Durch Standardisierung erhalten wir $ ((overline(X)-mu)sqrt(n))/(sigma) tilde cal(N)(0,1), $ wofür wir mittels Technologieeinsatz die Quantilen $z_((1-gamma)/2)$ und $z_(gamma+(1-gamma)/2)=z_((1+gamma)/2)$ errechnen können (siehe VO Notizen für Skizze). Somit gilt: $ &bb(P)[z_((1-gamma)/2)<= ((overline(X)-mu)sqrt(n))/(sigma)<=z_((1+gamma)/2)]=gamma\ arrow.l.r.double &bb(P)[sigma/sqrt(n) dot z_((1-gamma)/2)-overline(X) <= -mu <= sigma/sqrt(n) dot z_((1+gamma)/2)-overline(X)]=gamma\ arrow.l.r.double &bb(P)[-sigma/sqrt(n) dot z_((1+gamma)/2)+overline(X) <= mu <= -sigma/sqrt(n) dot z_((1-gamma)/2)+overline(X)]=gamma\ arrow.l.r.double &bb(P)[-sigma/sqrt(n) dot z_((1+gamma)/2)+overline(X) <= mu <= sigma/sqrt(n) dot z_((1+gamma)/2)+overline(X)]=gamma, $ wobei wir in der letzten Zeile verwendet haben, dass $z_((1-gamma)/2)=-z_((1+gamma)/2)$. Somit haben wir eine explizite Formel zur Berechnung des Konfidenzintervalls!
+]
+Die Zufallsvariable $((overline(X)-mu)sqrt(n))/(sigma)$ war in diesem Beispiel maßgeblich, um das Konfidenzintervall explizit anschreiben zu können. Diese Zufallsvariable ist ein Beispiel für eine sogenannte _Pivot-Zufallsvariable_.
+
+#definition("Pivot")[
+Seien $X_1,...,X_n tilde"iid" f(x|theta), x_i in cal(X), theta in Theta$. Eine Funktion $g:cal(X)^n times Theta arrow.r.long bb(R)$ heißt *Pivot*, falls:
++ $theta arrow.r.bar g(x_1,...,x_n,theta)$ stetig ist für alle $(x_1,...,x_n) in cal(X)^n$ und
++ Die Verteilung von $g(X_1,...,X_n,theta)$ nicht von $theta$ abhängt.
+]
+Unsere obige Zufallsvariable ist sicherlich stetig in $mu$ und ihre Verteilung $cal(N)(0,1)$ hängt offensichtlich nicht von $mu$ ab, also ist sie ein Pivot.
+
+Mit diesem Begriff lässt sich eine *generelle Vorgehensweise* zum Auffinden von Konfidenzregionen erklären:
++ Finde Pivot-Zufallsvariable $g(X_1,...,X_n,theta)$
++ Bestimme Quantile $q_1$ und $q_2$ mit $bb(P)[q_1<=g(X_1,...,X_n,theta)<=q_2]=gamma$
++ $C:={theta:g(X_1,...,X_n,theta)in[q_1,q_2]}$ ist $100gamma$%-ige Konfidenzregion. Falls g affin, dann ist $C$ ein Intervall.
+
+Der letzte Schritt entspricht in der Praxis dem Umformen der Ungleichung $q_1<=g(X_1,...,X_n,theta)<=q_2$ nach $theta$, so wie wir es in obigem Beispiel gemacht haben.
+
+#proposition("Student-t-Verteilung")[
+Seien $X_1,...,X_n tilde^"iid" cal(N)(mu, sigma^2)$, $sigma^2$ unbekannt, $mu$ unbekannt. Dann ist $ T:=(overline(X)-mu)sqrt(n)/S tilde t_(n-1) $ eine Pivot-Zufallsvariable, die einer Student-t-Verteilung mit $n-1$ Freiheitsgraden folgt. $S^2:=1/(n-1) sum_(i=1)^n (X_i-overline(X))^2$ bezeichnet die Stichprobenvarianz.
+]
+
+Im Allgemeinen existieren Pivots nicht in praktikable Form. Daher bedienen wir uns einer asymptotischen Variante:
+
+#definition("Asymptotischer Pivot")[
+Seien $X_1,...,X_n tilde^"iid"f_theta$. $g:cal(X)^n times Theta arrow.r.long bb(R)$ heißt asymptotischer Pivot, falls:
++ $theta arrow.r.bar g(x_1,...,x_n,theta)$ stetig ist für alle $n in bb(N)$, $(x_1,...,x_n) in cal(X)^n$ und
++ $g(X_1,...,X_n,theta)$ konvergiert in Verteilung für $n->infinity$ gegen eine Verteilung, die nicht von $theta$ abhängt.
+]
+Nun lautet hier die Vorgehensweise:
++ Bestimme Quantile $q_1$, $q_2$ mit $lim_(n->infinity)bb(P)[q_1<=g(X_1,...,X_n,theta)<=q_2]=gamma$
++ $C_n:={theta:g(X_1,...,X_n,theta)in[q_1,q_2]} arrow.double lim_(n->infinity)bb(P)[theta in C_n]=gamma$
+
 === Bayessche Schätzung
+tba (siehe Notizen Tauböck 10.4.)
+
+=== Hoeffding-Ungleichung
+Das Resultat dieses kurzen Abschnitts, die _Hoeffding-Ungleichung_, hat gar nicht so viel mit Statistik bzw. dem nächsten Kapitel _Hypothesentests_ zu tun, aber ist generell relevant und wird für uns später noch von Bedeutung sein. Bevor wir die eigentliche Ungleichung beweisen, zeigen wir noch ein Hilfsresultat:
+
+#lemma("Hoeffding")[
+Sei $a<=X<=b$, $bb(E)[X]=0$. Dann gilt für alle $lambda>0$: $ bb(E)[e^(lambda X)]<=e^((lambda^2(b-a)^2)/8) $
+]
+
+
+#theorem("Hoeffding-Ungleichung")[
+
+]
 
 == 2 Hyptothesentests
-
+tba
 
 = Data Science
 
