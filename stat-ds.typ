@@ -311,15 +311,106 @@ Das Resultat dieses kurzen Abschnitts, die _Hoeffding-Ungleichung_, hat gar nich
 #lemma("Hoeffding")[
 Sei $a<=X<=b$, $bb(E)[X]=0$. Dann gilt für alle $lambda>0$: $ bb(E)[e^(lambda X)]<=e^((lambda^2(b-a)^2)/8) $
 ]
+#proof[
+Da $f(x)=e^(lambda x)$ eine konvexe Funktion ist, gilt für jedes $alpha in(0,1)$ und $x in [a, b]$,
+$ f(x) <= alpha f(a)+(1-alpha) f(b). $
 
+Wenn wir $alpha=(b-x)/(b-a) in [0,1]$ setzen, erhalten wir
+$ e^(lambda x) <= (b-x)/(b-a) e^(lambda a)+(x-a)/(b-a) e^(lambda b). $
+
+Wenn wir den Erwartungswert nehmen, erhalten wir
+$ bb(E)[e^(lambda X)] <= (b-bb(E)[X])/(b-a) e^(lambda a)+(bb(E)[X]-a)/(b-a) e^(lambda b)=(b)/(b-a) e^(lambda a)-(a)/(b-a) e^(lambda b), $
+wobei wir die Tatsache verwendet haben, dass $bb(E)[X]=0$. Bezeichnen wir $h=lambda(b-a), p=(-a)/(b-a)$ und $L(h)=-h p+log (1-p+p e^h)$. Dann kann der Ausdruck auf der rechten Seite der obigen Gleichung als $e^(L(h))$ umgeschrieben werden. Um unseren Beweis abzuschließen, genügt es zu zeigen, dass $L(h) <= (h^2)/(8)$. Dies folgt aus dem Satz von Taylor unter Verwendung der Tatsachen: $L(0)=L'(0)=0$ und $L''(h) <= 1 / 4$ für alle $h$.
+]
 
 #theorem("Hoeffding-Ungleichung")[
+Seien $X_1,...,X_n$ unabhängig, $a<=X_i<=b$ fast sicher, $S_n:=sum_(i=1)^n X_i$. Dann gilt: $ bb(P)[abs(S_n-bb(E)S_n)>=t]<=exp((-2t^2)/(sum_(i=1)^n (b_i-a_i)^2)). $
+]
+#proof[
+Sei $X_i=Z_i-bb(E)[Z_i]$ und $overline(X)=1/m sum_i X_i$. Unter Verwendung der Monotonie der Exponentialfunktion und der Markov-Ungleichung haben wir für jedes $lambda>0$ und $epsilon>0$,
+$ bb(P)[overline(X) >= epsilon]=bb(P)[e^(lambda overline(X)) >= e^(lambda epsilon)] <= e^(-lambda epsilon) bb(E)[e^(lambda overline(X))]. $ Unter Verwendung der Unabhängigkeitsannahme haben wir auch $ bb(E)[e^(lambda overline(X)_1)]=bb(E)[product_i e^(lambda X_i / m)]=product_i bb(E)[e^(lambda X_i / m)]. $ Nach dem Lemma von Hoeffding gilt für jedes $i$ $ bb(E)[e^(lambda X_i / m)] <= e^(lambda^2(b-o)^2)/(5 m^2). $ Daher gilt: $ bb(P)[overline(X) >= epsilon] <= e^(-lambda epsilon) product_i e^((lambda^2 (b-a)^2)/(8 m^2)) = e^((-lambda epsilon + lambda^2 (b-a)^2)/(8 m)). $ Setzt man $lambda = (4m epsilon)/((b-a)^2)$, so erhalten wir $ bb(P)[overline(X) >= epsilon] <= e^(-(2m epsilon^2)/((b-a)^2)). $ Wendet man die gleichen Argumente auf die Variable $-overline(X)$ an, erhalten wir $bb(P)[overline(X) <= -epsilon] <= e^(-(2m epsilon^2)/((b-a)^2))$. Der Satz folgt durch Anwendung Union Bounds auf die beiden Fälle.
+]
+
+
+== 2 Hyptothesentests
+#example("Münzwurf")[
 
 ]
 
-== 2 Hyptothesentests
-tba
+#example("Higgs-Boson")[
 
+]
+
+Generelles Setting: $X_1,...,X_n tilde f(x|theta)$, $theta in Theta$, $Theta_0, Theta_1 subset Theta$, $Theta_0 sect Theta_1 = nothing$.\
+Nullhyptothese: $theta in Theta_0$ ... $H_0$\
+Alternativhypothese: $theta in Theta_1$ ... $H_1$
+
+In der Regel wird die Nullhypothese $H_0$ als die "wahrscheinlichere" oder als die zu widerlegende Aussage gewählt. Es handelt sich dabei meist um die Aussage, dass es keinen Effekt oder Unterschied gibt, also um den Status quo oder eine bekannte Standardannahme.
+
+#definition("Testfunktion")[
+Eine Testfunktion bzw. Entscheidungsfunktion ist eine Funktion $ delta:cal(X)^n arrow.r.long (0,1}. $ Üblicherweise greift sie auf eine Statistik $T$ zurück und ist dann wie folgt definiert: $ delta(x_1,...x_n):= cases(1 quad "falls" T(x_1,...x_n) in C, 0 quad "falls" T(x_1,...x_n) in.not C)=bold(1)_{T(x_1,...x_n) in C} $
+]
+
+#definition("Fehler 1. Art, Fehler 2. Art")[
+#table(
+  columns: (auto, auto, auto),
+  inset: 10pt,
+  align: horizon,
+  table.header(
+    [], [$H_0$ stimmt], [$H_1$ stimmt],
+  ),
+  "Test sagt 0", "", "Fehler 2. Art",
+  "Test sagt 1", "Fehler 1. Art",
+)
+]
+#definition("Fehlerwahrscheinlichkeit 1. & 2. Art")[\
+$h(theta):=bb(P)_theta [delta=1]$ mit $theta in Theta_0$ heißt Fehlerwahrscheinlichkeit 1.Art,\
+$g(theta):=bb(P)_theta [delta=0]$ mit $theta in Theta_1$ heißt Fehlerwahrscheinlichkeit 2. Art.
+]
+
+#example[
+$X_1,...X_n tilde^"iid" cal(B)(p)$, $H_0: p=1/2$, $H_1: p != 1/2$ ...siehe Notizen
+]
+
+#definition("Neyman-Pearson-Framework")[
+Fixiere Signifikantniveau $alpha in (0,1)$ und definiere: $ cal(D)(Theta_0,alpha):={delta:cal(X)^n arrow.long {0,1}:quad sup_(theta in Theta_0) bb(P)_theta [delta=1]<=alpha}. $ Dies sind also jene Testfunktionen, deren Fehlerwahrscheinlichkeit 1. Art kleiner gleich $alpha$ ist.] 
+
+In dieser Menge suchen wir nun nach Tests, die die Fehlerwahrscheinlichkeit 2. Art minimieren. Formal: $ inf_(delta in cal(D)(Theta_0,alpha)) quad sup_(theta in Theta_1)bb(P)[delta=0]. $ Dies führt unmittelbar zu folgenden Begriff:
+
+#definition("Optimalität eines Tests")[
+Ein Test $delta$ heißt optimal zum Niveau $alpha$, falls:
++ $delta in cal(D)(Theta_0,alpha)$ und
++ Für alle $psi in cal(D)(Theta_0,alpha)$, $theta in Theta_1$ gilt $bb(P)_theta [delta=0] <= bb(P)_theta [psi=0]$, d.h. die Fehlerwahrscheinlichkeit 2. Art ist für $delta$ minimal.
+]
+
+#definition("Einfacher Test")[
+Ein Test heißt einfach, falls $Theta_0={theta_0}$, $Theta_1={theta_1}$, wobei $theta_0 != theta_1$.
+]
+
+#lemma("Neyman-Pearson")[
+Seien $H_0: theta=theta_0$, $H_1: theta=theta_1$, $theta_0 != theta_1$, $alpha$ ein Signifikanzniveau. Dann ist der Test $ delta(x_1,...,x_n):=bold(1)_{Lambda(x_1,...,x_n)>=Q}, $ wobei $ bb(P)_theta_0 [Lambda>Q]=alpha, quad Lambda(x_1,...,x_n):=f(x_1,...,x_n|theta_1)/f(x_1,...,x_n|theta_0)=(cal(l)(theta_1))/(cal(l)(theta_0)), quad Q>0 $ optimal zum Niveau $alpha$. Der Quotient $Lambda$ bzw. $bold(1)_{Lambda>Q}$ wird *Likelihood-Ratio* bzw. Likelihood-Ratio-Test genannt.
+]
+#proof[
+Wir zeigen Optimalität:
++ $delta in cal(D)(Theta_0,alpha)$:\ Nach Konstruktion von $delta$ ist $bb(P)_theta_0 [Lambda>Q]=alpha arrow.l.r.double bb(P)_theta_0 [delta=1]=alpha$. Da $Theta_0={theta_0}$, gilt $sup_(theta in Theta_0)bb(P)_theta [delta=1]=alpha$, d.h. $delta in cal(D)(Theta_0,alpha)$.
++ Wir müssen zeigen: Für alle $psi in cal(D)(Theta_0,alpha)$, $theta in Theta_1$ gilt $ &bb(P)_theta [delta=0] <= bb(P)_theta [psi=0]\ arrow.l.r.double &1-bb(P)_theta [delta=1] <= 1-bb(P)_theta [psi=1]\ arrow.l.r.double &bb(P)_theta [delta=1] >= bb(P)_theta [psi=1]\ arrow.l.r.double &bb(P)_theta_1 [delta=1] >= bb(P)_theta_1 [psi=1], $ wobei der letzte Schritt wegen $Theta_1={theta_1}$ folgt.\ Sei $psi in cal(D)(Theta_0,alpha)$. Wir haben: $ cases(f(X|theta_1)/f(X|theta_0)>Q arrow.l.r.double delta=1, f(X|theta_1)/f(X|theta_0)<=Q arrow.l.r.double delta=0) arrow.l.r.double cases(f(X|theta_1)-Q dot f(X|theta_0)>0 arrow.l.r.double delta=1, f(X|theta_1)-Q dot f(X|theta_0)<=0 arrow.l.r.double delta=0). $ Daraus folgt: $ f(X|theta_1)-Q dot f(X|theta_0)<=delta(x) dot (f(X|theta_1)-Q dot f(X|theta_0))\ arrow.r.double psi(x) dot (f(X|theta_1)-Q dot f(X|theta_0))<=delta(x) dot (f(X|theta_1)-Q dot f(X|theta_0))\ arrow.r.double integral_(cal(X)^n) psi(x) dot (f(X|theta_1)-Q dot f(X|theta_0)) dif x <= integral_(cal(X)^n) delta(x) dot (f(X|theta_1)-Q dot f(X|theta_0)) dif x\ arrow.l.r.double integral_(cal(X)^n) (psi(x)-delta(x)) dot f(X|theta_1) dif x <= Q dot integral_(cal(X)^n) (psi(x)-delta(x)) dot f(X|theta_0) dif x\ arrow.l.r.double bb(E)_(theta_1)[psi]-bb(E)_(theta_1)[delta] <= Q dot (bb(E)_(theta_0)[psi]-bb(E)_(theta_0)[delta]). $ Da $psi$ und $delta$ bernoulliverteilt sind (sie nehmen nur Werte in ${0,1}$ an), gilt für die Erwartungswerte: $ bb(P)_(theta_1)[psi=1]-bb(P)_(theta_1)[delta=1] <= Q dot (underbrace(bb(P)_(theta_0)[psi=1],<=alpha)-underbrace(bb(P)_(theta_0)[delta=1],alpha))\ arrow.l.r.double bb(P)_(theta_1)[psi=1]-bb(P)_(theta_1)[delta=1] <=0\ arrow.l.r.double bb(P)_(theta_1)[psi=1]<=bb(P)_(theta_1)[delta=1], $ womit $delta$ optimal ist.
+]
+
+#example[
+Seien $X_1,...,X_n tilde^"iid" cal(N)(mu, sigma^2)$ mit $sigma^2$ bekannt. Sei $H_0: mu = mu_0$, $H_1: mu = mu_1$, $mu_1>mu_0$. Für die Likelihood-Ratio bekommen wir: $ Lambda(x)=f(x|mu_1,sigma^2)/f(x|mu_0,sigma^2) &= (product_(i=1)^n 1/sqrt(2pi sigma^2) dot exp(-(x_i-mu_1)^2/(2sigma^2)))/(product_(i=1)^n 1/sqrt(2pi sigma^2) dot exp(-(x_i-mu_0)^2/(2sigma^2)))\ &= (exp(-sum_(i=1)^n (x_i-mu_1)^2/(2sigma^2)))/(exp(-sum_(i=1)^n (x_i-mu_0)^2/(2sigma^2))) = exp(-1/(2sigma^2) sum_(i=1)^n ((x_i-mu_0)^2-(x_i-mu_1)^2))\ &= exp(-1/(2sigma^2) sum_(i=1)^n (cancel(x_i^2)-2x_i mu_0 +mu_0^2-cancel(x_i^2)+2x_i mu_1-mu_1^2))\ &= exp(-1/(sigma^2)(mu_1-mu_0) sum_(i=1)^n x_i - n/(2sigma^2) (mu_0^2-mu_1^2))\ &= exp(-n/(sigma^2) (underbrace((mu_1-mu_0),>0) 1/n sum_(i=1)^n x_i - (mu_0^2-mu_1^2))). $ Wir sehen also, dass $Lambda$ lediglich von $overline(X)$ abhängt, und zwar direkt proportional, d.h. $ Lambda(x)>Q arrow.l.r.double overline(X)>c $ für ein gewisses $c$. Dieses $c$ muss $bb(P)_mu_0[overline(X)>c]=alpha$ erfüllen, d.h. wir können die Verteilung von $overline(X)$ unter $mu_0$ bzw. deren Quantile verwenden, um $c$ explizit anzugeben: $ overline(X) tilde cal(N)(mu_0,sigma^2/n) &arrow.r.double (sqrt(n)(overline(X)-mu_0))/sigma tilde cal(N)(0,1)\ &arrow.r.double_(bb(P)_mu_0[overline(X)>c]=alpha \ arrow.l.r.double bb(P)_mu_0[overline(X)<=c]=1-alpha) c:=z_(1-alpha), $ wobei $z_(1-alpha)$ das $(1-alpha)$-Quantil der Standardnormalverteilung bezeichnet.\
+
+Zusammenfassend können wir also durch $bold(1)_{Z>z_(1-alpha)}$ mit $Z:= (sqrt(n)(overline(X)-mu_0))/sigma$ einen Test angeben, der mit Signifikanzniveau $alpha$ eine Aussage über $H_0: mu = mu_0$ macht.\
+]
+
+#remark[
+- Der soeben konstruierte Test hängt nicht von $mu_1$ ab, d.h. wir können als Alternativhypothese auch ein beliebiges anderes $mu_2$ mit $mu_2>mu_0$ angeben.
+- Falls $mu_2<mu_0$, dann ist die Abhängigkeit zwischen $Lambda$ und $overline(X)$ nicht direkt sondern indirekt proportional, d.h. $ Lambda(x)>Q arrow.l.r.double overline(X)<=c. $ Wir können in diesem Fall analog einen Test $bold(1)_{Z<=z_alpha}$ konstruieren.
+- Es gibt keinen optimalen Test für $H_0:mu=mu_0$, $H_1:mu!=mu_0$ (in VO unbegründet).
+]
+
+#theorem[
+
+]
 = Data Science
 
 == Lineare Regression
